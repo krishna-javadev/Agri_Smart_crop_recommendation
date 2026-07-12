@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSmart - AI-Powered Precision Farming Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-morphism-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-morphism-hover:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px 0 rgba(16, 185, 129, 0.2);
+        }
+        
+        /*
+         * To change the background color of the navigation bar, modify the `background` property below.
+         * The current value `rgba(15, 23, 42, 0.8)` sets a dark blue-gray with 80% opacity.
+         */
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .primary-btn:hover {
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .secondary-btn {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .secondary-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .feature-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .icon-glow {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .text-gradient-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /*
+         * To change the blue gradient text color, modify the hex codes in the `linear-gradient` function below.
+         * The first hex code (#3b82f6) is the starting color, and the second (#2563eb) is the ending color.
+         */
+        .text-gradient-blue {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white relative">
+    <!-- Navigation -->
+    <nav class="stat-card backdrop-blur fixed w-full z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 lg:px-12 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg icon-glow">
+                            <i class="fas fa-leaf text-white text-xl"></i>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full pulse-ring"></div>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">AgriSmart</h1>
+                        <p class="text-xs text-gray-400">Precision Farming</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-300 hover:text-emerald-400 font-medium transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-gray-300 hover:text-emerald-400 font-medium transition-colors">How it Works</a>
+                    <a href="#benefits" class="text-gray-300 hover:text-emerald-400 font-medium transition-colors">Benefits</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('login') }}" class="text-gray-300 hover:text-white font-semibold transition-all duration-300 px-5 py-2 rounded-lg hover:bg-white hover:bg-opacity-5">
+                        Sign In
+                    </a>
+                    <a href="{{ url_for('register') }}" class="primary-btn text-white px-6 py-2.5 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2">
+                        <span>Get Started</span>
+                        <i class="fas fa-arrow-right text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-24 px-6 lg:px-12 relative grid-pattern">
+        <div class="container mx-auto">
+            <div class="text-center max-w-5xl mx-auto fade-in-up">
+                <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass-morphism mb-8">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full pulse-ring"></span>
+                    <span class="text-sm font-semibold text-gray-300">Powered by AI & Machine Learning</span>
+                </div>
+                
+                <h2 class="text-6xl lg:text-7xl font-black mb-6 leading-tight">
+                    <span class="text-white">Transform Your Farm with</span><br/>
+                    <span class="gradient-text">AI-Driven Intelligence</span>
+                </h2>
+                
+                <p class="text-xl lg:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+                    Advanced equipment rental platform integrated with real-time weather analytics and AI-powered crop recommendations. Maximize yields, minimize costs.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="{{ url_for('register') }}" class="primary-btn text-white px-10 py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center space-x-3">
+                        <span>Get Started</span>
+                        <i class="fas fa-rocket"></i>
+                    </a>
+                    <a href="#features" class="secondary-btn text-white px-10 py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center space-x-3">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Features</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-24 max-w-5xl mx-auto">
+                <div class="stat-card rounded-2xl p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-black text-gradient-green mb-2">99%</div>
+                    <div class="text-gray-400 font-medium">ML Accuracy</div>
+                    <div class="text-xs text-gray-500 mt-1">Random Forest Model</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-black text-gradient-blue mb-2">24/7</div>
+                    <div class="text-gray-400 font-medium">AI Assistant</div>
+                    <div class="text-xs text-gray-500 mt-1">Gemini Powered</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-black text-gradient-green mb-2">100+</div>
+                    <div class="text-gray-400 font-medium">Equipment</div>
+                    <div class="text-xs text-gray-500 mt-1">Fixed Pricing</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-black text-gradient-blue mb-2">22</div>
+                    <div class="text-gray-400 font-medium">Crop Types</div>
+                    <div class="text-xs text-gray-500 mt-1">Supported</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 px-6 lg:px-12 relative">
+        <div class="container mx-auto">
+            <div class="text-center mb-20 max-w-3xl mx-auto">
+                <h3 class="text-5xl lg:text-6xl font-black mb-6">
+                    <span class="text-white">Everything You Need for</span>
+                    <span class="gradient-text"> Modern Farming</span>
+                </h3>
+                <p class="text-xl text-gray-400">
+                    Comprehensive suite of tools designed to revolutionize agricultural operations
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                <!-- Feature 1: Equipment Rental -->
+                <div class="glass-morphism glass-morphism-hover rounded-3xl p-8 feature-card">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-6 icon-glow floating">
+                        <i class="fas fa-tractor text-3xl text-white"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-4">Smart Equipment Rental</h4>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Access premium farming equipment with transparent pricing. Real-time availability tracking and instant booking confirmation.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
+                            <span class="text-gray-400">Instant Booking System</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
+                            <span class="text-gray-400">Company-Fixed Pricing</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
+                            <span class="text-gray-400">Real-Time Availability</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
+                            <span class="text-gray-400">Automated Invoicing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2: AI Crop Recommendations -->
+                <div class="glass-morphism glass-morphism-hover rounded-3xl p-8 feature-card">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-6 icon-glow floating" style="animation-delay: 0.5s;">
+                        <i class="fas fa-brain text-3xl text-white"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-4">AI Crop Intelligence</h4>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Machine learning-powered recommendations based on soil composition and real-time weather analytics.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                            <span class="text-gray-400">99% ML Accuracy (Random Forest)</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                            <span class="text-gray-400">Live Weather Integration</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                            <span class="text-gray-400">NPK Soil Analysis</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                            <span class="text-gray-400">22 Crop Type Support</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3: AI Assistant -->
+                <div class="glass-morphism glass-morphism-hover rounded-3xl p-8 feature-card">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center mb-6 icon-glow floating" style="animation-delay: 1s;">
+                        <i class="fas fa-robot text-3xl text-white"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-4">Gemini AI Assistant</h4>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        24/7 intelligent chatbot providing step-by-step cultivation guidance and expert farming insights.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
+                            <span class="text-gray-400">Powered by Google Gemini</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
+                            <span class="text-gray-400">Real-Time Responses</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
+                            <span class="text-gray-400">Cultivation Best Practices</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-sm">
+                            <div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
+                            <span class="text-gray-400">Pest Management Tips</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 px-6 lg:px-12 relative">
+        <div class="container mx-auto max-w-5xl">
+            <div class="glass-morphism rounded-3xl p-12 lg:p-16 text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500"></div>
+                
+                <h3 class="text-4xl lg:text-5xl font-black mb-6">
+                    <span class="text-white">Ready to Modernize</span><br/>
+                    <span class="gradient-text">Your Agricultural Operations?</span>
+                </h3>
+                <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+                    Join the future of precision farming. Start optimizing your yields with AI-powered insights today.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="{{ url_for('register') }}" class="primary-btn text-white px-12 py-5 rounded-lg font-bold text-lg transition-all duration-300 flex items-center space-x-3">
+                        <span>Start Free Trial</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="{{ url_for('login') }}" class="secondary-btn text-white px-12 py-5 rounded-lg font-semibold text-lg transition-all duration-300">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="nav-glass py-8 px-6 mt-20 border-t border-white border-opacity-5">
+        <div class="container mx-auto text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                    <i class="fas fa-leaf text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold text-white">AgriSmart</span>
+            </div>
+            <p class="text-gray-500 text-sm">
+                © 2025 AgriSmart. Precision Farming Platform. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard - AgriSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glass-hover:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .sidebar-glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-gradient-green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-left: 3px solid #10b981;
+        }
+        
+        .stat-gradient-blue {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .stat-gradient-purple {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%);
+            border-left: 3px solid #a855f7;
+        }
+        
+        .stat-gradient-orange {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.05) 100%);
+            border-left: 3px solid #f97316;
+        }
+        
+        .nav-item {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: #10b981;
+        }
+        
+        .badge-pending {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        
+        .badge-confirmed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .badge-completed {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .primary-btn:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <!-- Top Navigation -->
+    <nav class="nav-glass fixed w-full z-50">
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <button id="sidebarToggle" class="lg:hidden text-gray-400 hover:text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-leaf text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold text-white">AgriSmart</h1>
+                            <p class="text-xs text-gray-400">Owner Portal</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <!-- Search -->
+                    <div class="hidden md:block">
+                        <div class="relative">
+                            <input type="text" placeholder="Search bookings..." class="bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-4 py-2 pl-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-500"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile -->
+                    <div class="flex items-center space-x-3">
+                        <div>
+                            <p class="text-sm font-semibold text-white text-right">{{ current_user.name }}</p>
+                            <p class="text-xs text-gray-400 text-right">Equipment Owner</p>
+                        </div>
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center font-bold">
+                            {{ current_user.name[0].upper() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar-glass fixed left-0 top-16 h-full w-64 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+        <div class="p-6">
+            <nav class="space-y-2">
+                <a href="{{ url_for('owner_dashboard') }}" class="nav-item active flex items-center space-x-3 px-4 py-3 rounded-lg text-white">
+                    <i class="fas fa-home w-5"></i>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                <a href="{{ url_for('owner_equipment') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white">
+                    <i class="fas fa-tractor w-5"></i>
+                    <span class="font-medium">Equipment</span>
+                </a>
+                <a href="{{ url_for('owner_bookings') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white">
+                    <i class="fas fa-calendar-check w-5"></i>
+                    <span class="font-medium">Bookings</span>
+                </a>
+                <a href="{{ url_for('owner_analytics') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span class="font-medium">Analytics</span>
+                </a>
+            </nav>
+            
+            <div class="mt-8 pt-8 border-t border-white border-opacity-10">
+                <a href="{{ url_for('logout') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500 hover:bg-opacity-10 transition-all">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span class="font-medium">Logout</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 pt-24 p-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <!-- Welcome Section -->
+            <div class="mb-8">
+                {% if analytics_mode %}
+                    <h2 class="text-3xl font-black text-white mb-2">Analytics Dashboard 📈</h2>
+                    <p class="text-gray-400">Detailed business insights and performance metrics</p>
+                {% elif bookings_mode %}
+                    <h2 class="text-3xl font-black text-white mb-2">All Bookings 📅</h2>
+                    <p class="text-gray-400">Manage and track all rental bookings</p>
+                {% elif settings_mode %}
+                    <h2 class="text-3xl font-black text-white mb-2">Settings ⚙️</h2>
+                    <p class="text-gray-400">Configure your account and preferences</p>
+                {% else %}
+                    <h2 class="text-3xl font-black text-white mb-2">Business Overview 📊</h2>
+                    <p class="text-gray-400">Monitor your equipment rental performance</p>
+                {% endif %}
+            </div>
+
+            <!-- Conditional Content Sections -->
+            {% if bookings_mode %}
+                <!-- All Bookings View -->
+                <div class="glass-morphism rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-1">All Rental Bookings</h3>
+                            <p class="text-sm text-gray-400">Complete booking history</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-4 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-sm font-semibold text-gray-400 hover:text-white transition-all">
+                                <i class="fas fa-filter mr-2"></i>Filter
+                            </button>
+                            <button class="px-4 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-sm font-semibold text-gray-400 hover:text-white transition-all">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {% if bookings %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-white border-opacity-10">
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Farmer</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Equipment</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Start Date</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Duration</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Revenue</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Status</th>
+                                    <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rental in bookings %}
+                                <tr class="border-b border-white border-opacity-5 hover:bg-white hover:bg-opacity-5 transition-colors">
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center font-bold">
+                                                {{ rental.user.name[0].upper() }}
+                                            </div>
+                                            <div>
+                                                <p class="font-semibold text-white">{{ rental.user.name }}</p>
+                                                <p class="text-xs text-gray-400">{{ rental.user.email }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div>
+                                            <p class="font-semibold text-white">{{ rental.equipment.name }}</p>
+                                            <p class="text-xs text-gray-400">{{ rental.equipment.category }}</p>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 text-gray-300">{{ rental.start_date.strftime('%b %d, %Y') }}</td>
+                                    <td class="py-4 px-4 text-gray-300">{{ rental.duration }} days</td>
+                                    <td class="py-4 px-4">
+                                        <span class="font-bold text-emerald-400">₹{{ rental.total_cost }}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="badge-{{ rental.status }} px-3 py-1 rounded-full text-xs font-semibold">
+                                            {{ rental.status.capitalize() }}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <button class="text-gray-400 hover:text-white transition-colors">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-16">
+                        <div class="w-20 h-20 bg-white bg-opacity-5 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-inbox text-4xl text-gray-600"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-white mb-2">No bookings yet</h4>
+                        <p class="text-gray-400">Rental bookings will appear here</p>
+                    </div>
+                    {% endif %}
+                </div>
+            
+            {% elif settings_mode %}
+                <!-- Settings View -->
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <!-- Account Settings -->
+                    <div class="glass-morphism rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Account Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Name</label>
+                                <input type="text" value="{{ current_user.name }}" class="w-full bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                                <input type="email" value="{{ current_user.email }}" class="w-full bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Phone</label>
+                                <input type="tel" placeholder="+91 98765 43210" class="w-full bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <button class="primary-btn px-6 py-2 rounded-lg font-semibold text-white">Save Changes</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Business Settings -->
+                    <div class="glass-morphism rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Business Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Business Name</label>
+                                <input type="text" placeholder="AgriSmart Equipment Rentals" class="w-full bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Business Address</label>
+                                <textarea placeholder="Enter your business address" class="w-full bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 h-20"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">GST Number</label>
+                                <input type="text" placeholder="27AABCU9603R1ZX" class="w-full bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <button class="primary-btn px-6 py-2 rounded-lg font-semibold text-white">Save Settings</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification Settings -->
+                    <div class="glass-morphism rounded-2xl p-6 lg:col-span-2">
+                        <h3 class="text-xl font-bold text-white mb-4">Notification Settings</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-white font-medium">Email Notifications</h4>
+                                    <p class="text-sm text-gray-400">Receive notifications via email</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-white font-medium">SMS Notifications</h4>
+                                    <p class="text-sm text-gray-400">Receive notifications via SMS</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            {% else %}
+                <!-- Default Dashboard View -->
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Equipment -->
+                <div class="glass-morphism stat-gradient-green rounded-2xl p-6 glass-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-emerald-500 bg-opacity-20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-tractor text-2xl text-emerald-400"></i>
+                        </div>
+                        <span class="text-xs text-emerald-400 font-semibold">INVENTORY</span>
+                    </div>
+                    <h3 class="text-3xl font-black text-white mb-1">{{ equipment_count }}</h3>
+                    <p class="text-sm text-gray-400">Total Equipment</p>
+                    <div class="mt-3 flex items-center text-xs">
+                        <span class="text-emerald-400 font-semibold">+2</span>
+                        <span class="text-gray-500 ml-2">from last month</span>
+                    </div>
+                </div>
+
+                <!-- Active Rentals -->
+                <div class="glass-morphism stat-gradient-blue rounded-2xl p-6 glass-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-blue-500 bg-opacity-20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-clock text-2xl text-blue-400"></i>
+                        </div>
+                        <span class="text-xs text-blue-400 font-semibold">ACTIVE</span>
+                    </div>
+                    <h3 class="text-3xl font-black text-white mb-1">{{ active_rentals }}</h3>
+                    <p class="text-sm text-gray-400">Active Rentals</p>
+                    <div class="mt-3 flex items-center text-xs">
+                        <span class="text-blue-400 font-semibold">{{ (active_rentals / equipment_count * 100)|round(1) if equipment_count > 0 else 0 }}%</span>
+                        <span class="text-gray-500 ml-2">utilization rate</span>
+                    </div>
+                </div>
+
+                <!-- Total Earnings -->
+                <div class="glass-morphism stat-gradient-purple rounded-2xl p-6 glass-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-purple-500 bg-opacity-20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-rupee-sign text-2xl text-purple-400"></i>
+                        </div>
+                        <span class="text-xs text-purple-400 font-semibold">REVENUE</span>
+                    </div>
+                    <h3 class="text-3xl font-black text-white mb-1">₹{{ "%.2f"|format(earnings) }}</h3>
+                    <p class="text-sm text-gray-400">Total Earnings</p>
+                    <div class="mt-3 flex items-center text-xs">
+                        <span class="text-purple-400 font-semibold">+12.5%</span>
+                        <span class="text-gray-500 ml-2">from last month</span>
+                    </div>
+                </div>
+
+                <!-- Total Bookings -->
+                <div class="glass-morphism stat-gradient-orange rounded-2xl p-6 glass-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-orange-500 bg-opacity-20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-2xl text-orange-400"></i>
+                        </div>
+                        <span class="text-xs text-orange-400 font-semibold">ALL TIME</span>
+                    </div>
+                    <h3 class="text-3xl font-black text-white mb-1">{{ rentals|length }}</h3>
+                    <p class="text-sm text-gray-400">Total Bookings</p>
+                    <div class="mt-3 flex items-center text-xs">
+                        <span class="text-orange-400 font-semibold">{{ rentals|length }}</span>
+                        <span class="text-gray-500 ml-2">completed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid lg:grid-cols-2 gap-6 mb-8">
+                <!-- Revenue Chart -->
+                <div class="glass-morphism rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-1">Revenue Trends</h3>
+                            <p class="text-sm text-gray-400">Monthly earnings overview</p>
+                        </div>
+                        <select class="bg-white bg-opacity-5 border border-white border-opacity-10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            <option>Last 6 months</option>
+                            <option>Last year</option>
+                            <option>All time</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Equipment Utilization -->
+                <div class="glass-morphism rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-1">Equipment Status</h3>
+                            <p class="text-sm text-gray-400">Current utilization</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-400">Available</span>
+                                <span class="text-sm font-semibold text-emerald-400">{{ equipment_count - active_rentals }}</span>
+                            </div>
+                            <div class="w-full bg-white bg-opacity-5 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full" style="width: {{ ((equipment_count - active_rentals) / equipment_count * 100)|round(1) if equipment_count > 0 else 0 }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-400">In Use</span>
+                                <span class="text-sm font-semibold text-blue-400">{{ active_rentals }}</span>
+                            </div>
+                            <div class="w-full bg-white bg-opacity-5 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full" style="width: {{ (active_rentals / equipment_count * 100)|round(1) if equipment_count > 0 else 0 }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-400">Under Maintenance</span>
+                                <span class="text-sm font-semibold text-yellow-400">0</span>
+                            </div>
+                            <div class="w-full bg-white bg-opacity-5 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-yellow-500 to-orange-600 h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 grid grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-black text-white">{{ ((equipment_count - active_rentals) / equipment_count * 100)|round(1) if equipment_count > 0 else 0 }}%</div>
+                            <div class="text-xs text-gray-400">Available</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-black text-white">{{ (active_rentals / equipment_count * 100)|round(1) if equipment_count > 0 else 0 }}%</div>
+                            <div class="text-xs text-gray-400">Rented</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-black text-white">0%</div>
+                            <div class="text-xs text-gray-400">Maintenance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bookings -->
+            <div class="glass-morphism rounded-2xl p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-1">Recent Bookings</h3>
+                        <p class="text-sm text-gray-400">Latest rental transactions</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="px-4 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-sm font-semibold text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                        <button class="px-4 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-sm font-semibold text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-download mr-2"></i>Export
+                        </button>
+                    </div>
+                </div>
+                
+                {% if rentals %}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-white border-opacity-10">
+                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Farmer</th>
+                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Equipment</th>
+                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Start Date</th>
+                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Duration</th>
+                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Revenue</th>
+                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Status</th>
+                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-400">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rental in rentals %}
+                            <tr class="border-b border-white border-opacity-5 hover:bg-white hover:bg-opacity-5 transition-colors">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center font-bold">
+                                            {{ rental.user.name[0].upper() }}
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-white">{{ rental.user.name }}</p>
+                                            <p class="text-xs text-gray-400">{{ rental.user.email }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <div>
+                                        <p class="font-semibold text-white">{{ rental.equipment.name }}</p>
+                                        <p class="text-xs text-gray-400">{{ rental.equipment.category }}</p>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-gray-300">{{ rental.start_date.strftime('%b %d, %Y') }}</td>
+                                <td class="py-4 px-4 text-gray-300">{{ rental.duration }} days</td>
+                                <td class="py-4 px-4">
+                                    <span class="font-bold text-emerald-400">₹{{ rental.total_cost }}</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="badge-{{ rental.status }} px-3 py-1 rounded-full text-xs font-semibold">
+                                        {{ rental.status.capitalize() }}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <button class="text-gray-400 hover:text-white transition-colors">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-16">
+                    <div class="w-20 h-20 bg-white bg-opacity-5 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-inbox text-4xl text-gray-600"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2">No bookings yet</h4>
+                    <p class="text-gray-400">Rental bookings will appear here</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Sidebar Toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        sidebarToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Revenue Chart
+        const ctx = document.getElementById('revenueChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [12000, 19000, 15000, 25000, 22000, {{ earnings }}],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

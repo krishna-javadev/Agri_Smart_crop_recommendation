@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book {{ equipment.name }} - AgriSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .primary-btn:hover {
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            outline: none;
+        }
+        
+        .step-indicator {
+            position: relative;
+        }
+        
+        .step-indicator::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            right: -50%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+        }
+        
+        .step-indicator:last-child::after {
+            display: none;
+        }
+        
+        .step-indicator.active .step-circle {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
+        }
+        
+        .step-indicator.completed .step-circle {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="nav-glass fixed w-full z-50">
+        <div class="container mx-auto px-6 lg:px-12 py-4">
+            <div class="flex justify-between items-center">
+                <a href="{{ url_for('farmer_dashboard') }}" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-leaf text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-white">AgriSmart</h1>
+                        <p class="text-xs text-gray-400">Booking Process</p>
+                    </div>
+                </a>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('equipment_detail', id=equipment.id) }}" class="text-gray-400 hover:text-emerald-400 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="hidden md:inline">Back</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 px-6 lg:px-12 pb-12 relative z-10">
+        <div class="container mx-auto max-w-6xl">
+            <!-- Progress Steps -->
+            <div class="mb-12 fade-in-up">
+                <div class="flex items-center justify-center space-x-4">
+                    <div class="step-indicator active flex flex-col items-center">
+                        <div class="step-circle w-12 h-12 rounded-full border-2 border-white border-opacity-20 bg-white bg-opacity-5 flex items-center justify-center font-bold mb-2">
+                            1
+                        </div>
+                        <p class="text-sm font-semibold text-white">Details</p>
+                    </div>
+                    <div class="step-indicator flex flex-col items-center">
+                        <div class="step-circle w-12 h-12 rounded-full border-2 border-white border-opacity-20 bg-white bg-opacity-5 flex items-center justify-center font-bold mb-2">
+                            2
+                        </div>
+                        <p class="text-sm font-semibold text-gray-400">Review</p>
+                    </div>
+                    <div class="step-indicator flex flex-col items-center">
+                        <div class="step-circle w-12 h-12 rounded-full border-2 border-white border-opacity-20 bg-white bg-opacity-5 flex items-center justify-center font-bold mb-2">
+                            3
+                        </div>
+                        <p class="text-sm font-semibold text-gray-400">Confirm</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Left Column - Booking Form -->
+                <div class="lg:col-span-2 space-y-6 fade-in-up">
+                    <!-- Header -->
+                    <div>
+                        <h1 class="text-4xl font-black text-white mb-2">Complete Your Booking</h1>
+                        <p class="text-gray-400">Fill in the details to rent this equipment</p>
+                    </div>
+
+                    <!-- Booking Form -->
+                    <form method="POST" action="{{ url_for('rental_request', equipment_id=equipment.id) }}" id="bookingForm">
+                        <!-- Rental Duration -->
+                        <div class="glass-morphism rounded-2xl p-6 mb-6">
+                            <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                                <i class="fas fa-calendar-alt text-emerald-400 mr-3"></i>
+                                Rental Period
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Start Date -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-300 mb-2">
+                                        Start Date
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar text-gray-500"></i>
+                                        </div>
+                                        <input 
+                                            type="date" 
+                                            name="start_date" 
+                                            required 
+                                            min="{{ (now() + timedelta(days=1)).strftime('%Y-%m-%d') }}"
+                                            class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-white"
+                                        >
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Earliest available: Tomorrow
+                                    </p>
+                                </div>
+
+                                <!-- Duration -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-300 mb-2">
+                                        Duration (days)
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-clock text-gray-500"></i>
+                                        </div>
+                                        <input 
+                                            type="number" 
+                                            name="duration" 
+                                            id="duration"
+                                            required 
+                                            min="1" 
+                                            max="365" 
+                                            value="1"
+                                            class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-white"
+                                        >
+                                    </div>
+                                    
+                                    <!-- Quick Duration Selector -->
+                                    <div class="flex gap-2 mt-3">
+                                        <button type="button" onclick="setDuration(1)" class="px-3 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-xs font-semibold text-gray-400 hover:text-white transition-all">
+                                            1 Day
+                                        </button>
+                                        <button type="button" onclick="setDuration(3)" class="px-3 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-xs font-semibold text-gray-400 hover:text-white transition-all">
+                                            3 Days
+                                        </button>
+                                        <button type="button" onclick="setDuration(7)" class="px-3 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-xs font-semibold text-gray-400 hover:text-white transition-all">
+                                            1 Week
+                                        </button>
+                                        <button type="button" onclick="setDuration(30)" class="px-3 py-2 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 text-xs font-semibold text-gray-400 hover:text-white transition-all">
+                                            1 Month
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="glass-morphism rounded-2xl p-6 mb-6">
+                            <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                                <i class="fas fa-info-circle text-blue-400 mr-3"></i>
+                                Additional Details
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Delivery Address -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-300 mb-2">
+                                        Delivery Address
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute top-4 left-4">
+                                            <i class="fas fa-map-marker-alt text-gray-500"></i>
+                                        </div>
+                                        <textarea 
+                                            name="delivery_address"
+                                            rows="3"
+                                            placeholder="Enter your farm/field address for equipment delivery"
+                                            class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-white placeholder-gray-500 resize-none"
+                                        ></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Special Requirements -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-300 mb-2">
+                                        Special Requirements <span class="text-gray-500 font-normal">(Optional)</span>
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute top-4 left-4">
+                                            <i class="fas fa-comment text-gray-500"></i>
+                                        </div>
+                                        <textarea 
+                                            name="special_requirements"
+                                            rows="3"
+                                            placeholder="Any specific instructions or requirements..."
+                                            class="input-field w-full pl-12 pr-4 py-3.5 rounded-xl text-white placeholder-gray-500 resize-none"
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="glass-morphism rounded-2xl p-6 mb-6">
+                            <div class="space-y-4">
+                                <label class="flex items-start space-x-3 cursor-pointer">
+                                    <input type="checkbox" required class="w-5 h-5 mt-1 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-800">
+                                    <span class="text-sm text-gray-300">
+                                        I agree to the <a href="#" class="text-emerald-400 hover:text-emerald-300">Rental Terms & Conditions</a> and understand the cancellation policy
+                                    </span>
+                                </label>
+                                
+                                <label class="flex items-start space-x-3 cursor-pointer">
+                                    <input type="checkbox" required class="w-5 h-5 mt-1 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-800">
+                                    <span class="text-sm text-gray-300">
+                                        I confirm that I will use the equipment responsibly and follow all safety guidelines
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button 
+                            type="submit" 
+                            class="primary-btn w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center space-x-2"
+                        >
+                            <i class="fas fa-check-circle"></i>
+                            <span>Confirm Booking</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Column - Order Summary -->
+                <div class="lg:col-span-1 fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="glass-morphism rounded-2xl p-6 sticky top-24">
+                        <h3 class="text-xl font-bold text-white mb-6">Booking Summary</h3>
+                        
+                        <!-- Equipment Info -->
+                        <div class="mb-6 pb-6 border-b border-white border-opacity-10">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-tractor text-3xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-1">{{ equipment.name }}</h4>
+                                    <p class="text-xs text-gray-400">{{ equipment.category }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cost Breakdown -->
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Daily Rate</span>
+                                <span class="font-semibold text-white">₹{{ equipment.price_per_day }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Duration</span>
+                                <span class="font-semibold text-white"><span id="durationDisplay">1</span> day(s)</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Subtotal</span>
+                                <span class="font-semibold text-white">₹<span id="subtotal">{{ equipment.price_per_day }}</span></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Delivery Fee</span>
+                                <span class="font-semibold text-emerald-400">Free</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Insurance</span>
+                                <span class="font-semibold text-emerald-400">Included</span>
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="pt-6 border-t border-white border-opacity-10 mb-6">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xl font-bold text-white">Total Cost</span>
+                                <span class="text-3xl font-black text-emerald-400">₹<span id="totalCost">{{ equipment.price_per_day }}</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Features Included -->
+                        <div class="space-y-2">
+                            <p class="text-xs font-semibold text-gray-400 mb-3">INCLUDED IN YOUR BOOKING</p>
+                            <div class="flex items-center space-x-2 text-sm text-gray-300">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span>Free delivery & pickup</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm text-gray-300">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span>Equipment training</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm text-gray-300">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span>24/7 support</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm text-gray-300">
+                                <i class="fas fa-check-circle text-emerald-400 text-xs"></i>
+                                <span>Insurance coverage</span>
+                            </div>
+                        </div>
+
+                        <!-- Trust Badge -->
+                        <div class="mt-6 pt-6 border-t border-white border-opacity-10">
+                            <div class="flex items-center justify-center space-x-2 text-sm text-gray-400">
+                                <i class="fas fa-shield-alt text-emerald-400"></i>
+                                <span>Secure & Protected Booking</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const pricePerDay = {{ equipment.price_per_day }};
+        const durationInput = document.getElementById('duration');
+        const totalCostDisplay = document.getElementById('totalCost');
+        const subtotalDisplay = document.getElementById('subtotal');
+        const durationDisplay = document.getElementById('durationDisplay');
+
+        function updateCost() {
+            const duration = parseInt(durationInput.value) || 1;
+            const total = pricePerDay * duration;
+            totalCostDisplay.textContent = total.toFixed(2);
+            subtotalDisplay.textContent = total.toFixed(2);
+            durationDisplay.textContent = duration;
+        }
+
+        function setDuration(days) {
+            durationInput.value = days;
+            updateCost();
+        }
+
+        durationInput.addEventListener('input', updateCost);
+    </script>
+</body>
+</html>

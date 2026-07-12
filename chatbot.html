@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Farming Assistant - AgriSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glass-hover:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        #chatMessages {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        #chatMessages::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .primary-btn:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .bot-message {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .input-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .input-glass:focus {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            outline: none;
+        }
+        
+        .input-glass::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .text-gradient-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white relative">
+    <nav class="nav-glass fixed w-full z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-white">AI Assistant</h1>
+                        <p class="text-xs text-gray-400">Smart Farming Chat</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('farmer_dashboard') }}" class="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 pt-32 pb-12">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <div class="text-6xl mb-6 floating">
+                    <i class="fas fa-robot text-gradient-green"></i>
+                </div>
+                <h1 class="text-5xl font-black text-white mb-4">AI Farming Assistant</h1>
+                <p class="text-xl text-gray-400">Get intelligent guidance for crop cultivation, pest management, and farming best practices</p>
+            </div>
+
+            <div class="glass-morphism rounded-3xl p-8 glass-hover">
+                <div id="chatMessages" class="space-y-6 mb-8">
+                    <div class="flex justify-start">
+                        <div class="bot-message rounded-2xl p-6 max-w-2xl">
+                            <div class="space-y-3">
+                                <span class="text-2xl mr-2">👋</span>
+                                <strong class="text-lg text-emerald-300 block mb-2">Hello! I'm your AI farming assistant!</strong>
+                                <p class="text-white">I can help you with:</p>
+                                <span class="text-emerald-300 text-xl mr-2">•</span><span class="text-blue-300 font-medium">Crop selection and planting</span><br>
+                                <span class="text-emerald-300 text-xl mr-2">•</span><span class="text-blue-300 font-medium">Pest and disease management</span><br>
+                                <span class="text-emerald-300 text-xl mr-2">•</span><span class="text-blue-300 font-medium">Irrigation and water management</span><br>
+                                <span class="text-emerald-300 text-xl mr-2">•</span><span class="text-blue-300 font-medium">Soil health and fertilization</span><br>
+                                <br>
+                                <p class="text-white text-sm">Try asking: "What are high yield crops?" or "How do I control pests?"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="chatForm" class="flex gap-4">
+                    <input type="text" id="userMessage" placeholder="Ask your farming question..." required
+                           class="flex-1 px-6 py-4 rounded-xl input-glass outline-none transition">
+                    <button type="submit" id="sendButton" class="primary-btn px-8 py-4 rounded-xl font-semibold flex items-center space-x-2">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Send</span>
+                    </button>
+                </form>
+
+                <div id="loading" class="hidden mt-6 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400"></div>
+                    <p class="text-gray-400 mt-3">Thinking...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatForm = document.getElementById('chatForm');
+        const userMessageInput = document.getElementById('userMessage');
+        const chatMessages = document.getElementById('chatMessages');
+        const loading = document.getElementById('loading');
+        const sendButton = document.getElementById('sendButton');
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const message = userMessageInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            userMessageInput.value = '';
+            
+            // Show loading
+            loading.classList.remove('hidden');
+            sendButton.disabled = true;
+
+            try {
+                const response = await fetch('{{ url_for("chatbot") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                
+                // Hide loading
+                loading.classList.add('hidden');
+                sendButton.disabled = false;
+
+                // Add bot response
+                addMessage(data.response, 'bot');
+            } catch (error) {
+                loading.classList.add('hidden');
+                sendButton.disabled = false;
+                addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+            }
+        });
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `rounded-2xl p-6 max-w-2xl ${
+                sender === 'user' 
+                ? 'user-message text-white' 
+                : 'bot-message text-white'
+            }`;
+            
+            // Create a container for better formatting
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'space-y-3';
+            
+            // Format the message text for better display
+            let formattedText = text;
+            
+            // Convert line breaks to HTML
+            formattedText = formattedText.replace(/\n/g, '<br>');
+            
+            // Add proper spacing for sections
+            formattedText = formattedText.replace(/(<br>){2,}/g, '<br><br>'); // Normalize multiple breaks
+            
+            // Enhance emojis and symbols
+            formattedText = formattedText.replace(/🌾|🌱|🐛|💧|🌍|🌿|👋|✅|🛡️|⚠️|🕐|🎯|💡|📋|🌡️|🧪|📅|🔄/g, '<span class="text-2xl mr-2">$&</span>');
+            
+            // Make headers bold and larger
+            formattedText = formattedText.replace(/<strong>(.*?)<\/strong>/g, '<strong class="text-lg text-emerald-300 block mb-2">$1</strong>');
+            
+            // Enhance numbered lists
+            formattedText = formattedText.replace(/(\d+)\)/g, '<br><span class="text-emerald-300 font-bold">$1)</span>');
+            
+            // Enhance bullet points
+            formattedText = formattedText.replace(/•/g, '<span class="text-emerald-300 text-xl mr-2">•</span>');
+            
+            // Add styling to specific words
+            formattedText = formattedText.replace(/(Hybrid Rice|Hybrid Maize|High-yield Wheat|Tomatoes|Peppers|Cucumbers|Soybeans|Chickpeas)/g, '<span class="text-yellow-300 font-semibold">$1</span>');
+            formattedText = formattedText.replace(/(Proper soil preparation|Balanced fertilization|Irrigation management|Pest control|Quality seeds)/g, '<span class="text-blue-300 font-medium">$1</span>');
+            
+            contentDiv.innerHTML = formattedText;
+            messageBubble.appendChild(contentDiv);
+            messageDiv.appendChild(messageBubble);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom with smooth animation
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
